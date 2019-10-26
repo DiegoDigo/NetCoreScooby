@@ -2,14 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Scooby.Domain.Entity;
-using Scooby.Domain.Requests;
+using Scooby.Domain.ViewModels.CategoryViewModels;
 
 namespace Scooby.Infra.Repository
 {
     public interface ICategoriaRepository
     {
-        Task<List<Categoria>> All();
+        Task<List<ListarCategoriaViewModel>> All();
 
-        Task Save(CategoriaRequest categoria);
+        Task<Categoria> Save(EditorCategoriaViewModel categoria);
+
+        Task<Categoria> GetById(long id);
     }
 }
