@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Scooby.Infra.Data;
+using Scooby.Infra.Repository;
+using Scooby.Infra.Repository.Impl;
 
 namespace Scooby.Api
 {
@@ -19,6 +22,7 @@ namespace Scooby.Api
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddDbContext<ScoobyContext>(options =>
             {
                 options.UseSqlServer(
@@ -26,6 +30,17 @@ namespace Scooby.Api
                      assembly => assembly.MigrationsAssembly(typeof(Startup).Assembly.FullName));
 
             });
+
+            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+
+            services.AddApiVersioning();
+
+            services.AddMvc()
+                           .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                           .AddJsonOptions(opt =>
+                           {
+                               opt.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                           });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,11 +50,7 @@ namespace Scooby.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
+            app.UseMvc();
         }
     }
 }
